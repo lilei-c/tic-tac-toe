@@ -14,11 +14,12 @@ function minimax(node, depth)
 
 heuristic adj.(教学或教育)启发式的
  */
-import { evaluate } from './evaluate.js'
+import { evaluate, colToRow } from './evaluate.js'
 
 const childs = (node) => {
   let rst = []
-  for (let i in node) for (let j in node[i]) if (node[i][j] === null) rst.push([i, j])
+  for (let i in node)
+    for (let j in node[i]) if (node[i][j] === null) rst.push([i, j])
   return rst
 }
 
@@ -29,15 +30,41 @@ const childNode = (node, position, val) => {
   return rst
 }
 
-const isTerminalNode = (node) => Math.abs(evaluate(node)) === Infinity || !node.some((x) => x.some((m) => m === null))
+const theWinner = (node) => {
+  // 行
+  for (const m of node)
+    if (m[0] !== null && m[0] === m[1] && m[0] == m[2]) return m[0]
+  // 列
+  for (const m of colToRow(node))
+    if (m[0] !== null && m[0] === m[1] && m[0] == m[2]) return m[0]
+  // 对角线
+  if (
+    node[0][0] !== null &&
+    node[0][0] === node[1][1] &&
+    node[0][0] === node[2][2]
+  )
+    return node[0][0]
+  if (
+    node[2][0] !== null &&
+    node[2][0] === node[1][1] &&
+    node[2][0] === node[0][2]
+  )
+    return node[2][0]
+  return null
+}
+
+const isBoardFull = (node) => !node.some((x) => x.some((m) => m === null))
+
+const isTerminalNode = (node) => theWinner(node) || isBoardFull(node)
 
 const minimax = (node, depth, isMax = true) => {
   // console.log('node', node)
   if (isTerminalNode(node) || depth === 0) return [evaluate(node), null]
+  const allNextPosition = childs(node)
   if (isMax) {
     let val = -Infinity
-    let nextPosition = null
-    for (const child of childs(node)) {
+    let nextPosition = allNextPosition && allNextPosition[0]
+    for (const child of allNextPosition) {
       // console.log(node, child, childNode(node, child, 1))
       const childVal = minimax(childNode(node, child, 1), depth - 1, !isMax)[0]
       if (childVal > val) {
@@ -46,12 +73,12 @@ const minimax = (node, depth, isMax = true) => {
       }
       // console.log('max', val, nextPosition, childNode(node, nextPosition, 1))
     }
-    // console.log('max', val, nextPosition)
+    console.log('max', val, nextPosition)
     return [val, nextPosition]
   } else {
     let val = Infinity
-    let nextPosition = null
-    for (const child of childs(node)) {
+    let nextPosition = allNextPosition && allNextPosition[0] //
+    for (const child of allNextPosition) {
       const childVal = minimax(childNode(node, child, 0), depth - 1, !isMax)[0]
       // console.log('min', childVal, child, childNode(node, child, 0))
       if (childVal < val) {
@@ -59,7 +86,7 @@ const minimax = (node, depth, isMax = true) => {
         nextPosition = child
       }
     }
-    // console.log('min', val, nextPosition)
+    console.log('min', val, nextPosition)
     return [val, nextPosition]
   }
 }
@@ -68,13 +95,13 @@ const max = 1
 const min = 0
 
 const val_is = [
-  [max, min, null],
+  [min, null, max],
   [null, max, null],
-  [null, null, min],
+  [min, min, null],
 ]
 
 // console.log(childs(val_is))
 
-// console.log(minimax(val_is, 4))
+console.log(minimax(val_is, 2))
 
-export { minimax }
+export { theWinner, isBoardFull, minimax }

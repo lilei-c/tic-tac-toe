@@ -33,7 +33,13 @@ const val_is_negative_infinity = [
   [null, min, min],
 ]
 
-const datas = [val_is_1, val_is_2, val_is_infinity, val_is_infinity_2, val_is_negative_infinity]
+const datas = [
+  val_is_1,
+  val_is_2,
+  val_is_infinity,
+  val_is_infinity_2,
+  val_is_negative_infinity,
+]
 
 const sumMM = (arr) => {
   let rst = {}
@@ -92,4 +98,4 @@ console.log('--------------------------------')
 datas.map(evaluate).forEach(log)
 console.timeEnd('time')
 
-export { evaluate }
+export { evaluate, colToRow }
