@@ -59,24 +59,34 @@ const isBoardFull = (node) => !node.some((x) => x.some((m) => m === null))
 
 const isTerminalNode = (node) => theWinner(node) || isBoardFull(node)
 
-const minimax = (node, depth, isMax = true) => {
+const minimax = (
+  node,
+  depth,
+  alpha = -Infinity,
+  beta = Infinity,
+  isMax = true
+) => {
   // console.log('node', node)
   if (isTerminalNode(node) || depth === 0) return [evaluate(node), null]
   const allNextPosition = childs(node)
   if (isMax) {
     let val = -Infinity
     let nextPosition = allNextPosition && allNextPosition[0] // 即使所有评分都等于 -Infinity (必输局), 也要随便走一步
-    for (const child of allNextPosition) {
+    for (const childPosition of allNextPosition) {
       // console.log(node, child, childNode(node, child, 1))
       const childVal = minimax(
-        childNode(node, child, max),
+        childNode(node, childPosition, max),
         depth - 1,
+        alpha,
+        beta,
         !isMax
       )[0]
       if (childVal > val) {
         val = childVal
-        nextPosition = child
+        nextPosition = childPosition
       }
+      alpha = Math.max(alpha, val)
+      if (beta <= alpha) break
       // console.log('max', val, nextPosition, childNode(node, nextPosition, 1))
     }
     // console.log('max', val, nextPosition)
@@ -84,17 +94,21 @@ const minimax = (node, depth, isMax = true) => {
   } else {
     let val = Infinity
     let nextPosition = allNextPosition && allNextPosition[0]
-    for (const child of allNextPosition) {
+    for (const childPosition of allNextPosition) {
       const childVal = minimax(
-        childNode(node, child, min),
+        childNode(node, childPosition, min),
         depth - 1,
+        alpha,
+        beta,
         !isMax
       )[0]
       // console.log('min', childVal, child, childNode(node, child, 0))
       if (childVal < val) {
         val = childVal
-        nextPosition = child
+        nextPosition = childPosition
       }
+      beta = Math.min(beta, val)
+      if (beta <= alpha) break
     }
     // console.log('min', val, nextPosition)
     return [val, nextPosition]

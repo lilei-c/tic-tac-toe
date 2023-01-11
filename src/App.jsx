@@ -1,10 +1,9 @@
 import { useEffect } from 'react'
 import { useState } from 'react'
 import { max, min } from './bot/const'
+import { arrayN } from './bot/support'
 import { theWinner, isBoardFull, minimax } from './bot/minimax'
 import './App.css'
-
-const arrayN = (n) => Array(n).fill(null)
 
 const Square = ({ value, onClick }) => {
   const show = (value) => ({ [max]: 'X', [min]: 'O' }[value])
@@ -43,7 +42,7 @@ const Game = () => {
     if (!isGameOver && isBotStep) {
       // boot play
       console.time('thinking')
-      const score = minimax(squares, 2)
+      const score = minimax(squares, 4)
       console.timeEnd('thinking')
       console.log({ score })
       const [i, j] = score[1]
