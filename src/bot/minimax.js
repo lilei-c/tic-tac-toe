@@ -14,7 +14,9 @@ function minimax(node, depth)
 
 heuristic adj.(教学或教育)启发式的
  */
-import { evaluate, colToRow } from './evaluate.js'
+import { max, min } from './const'
+import { colToRow } from './support'
+import { evaluate } from './evaluate.js'
 
 const childs = (node) => {
   let rst = []
@@ -63,45 +65,40 @@ const minimax = (node, depth, isMax = true) => {
   const allNextPosition = childs(node)
   if (isMax) {
     let val = -Infinity
-    let nextPosition = allNextPosition && allNextPosition[0]
+    let nextPosition = allNextPosition && allNextPosition[0] // 即使所有评分都等于 -Infinity (必输局), 也要随便走一步
     for (const child of allNextPosition) {
       // console.log(node, child, childNode(node, child, 1))
-      const childVal = minimax(childNode(node, child, 1), depth - 1, !isMax)[0]
+      const childVal = minimax(
+        childNode(node, child, max),
+        depth - 1,
+        !isMax
+      )[0]
       if (childVal > val) {
         val = childVal
         nextPosition = child
       }
       // console.log('max', val, nextPosition, childNode(node, nextPosition, 1))
     }
-    console.log('max', val, nextPosition)
+    // console.log('max', val, nextPosition)
     return [val, nextPosition]
   } else {
     let val = Infinity
-    let nextPosition = allNextPosition && allNextPosition[0] //
+    let nextPosition = allNextPosition && allNextPosition[0]
     for (const child of allNextPosition) {
-      const childVal = minimax(childNode(node, child, 0), depth - 1, !isMax)[0]
+      const childVal = minimax(
+        childNode(node, child, min),
+        depth - 1,
+        !isMax
+      )[0]
       // console.log('min', childVal, child, childNode(node, child, 0))
       if (childVal < val) {
         val = childVal
         nextPosition = child
       }
     }
-    console.log('min', val, nextPosition)
+    // console.log('min', val, nextPosition)
     return [val, nextPosition]
   }
 }
-
-const max = 1
-const min = 0
-
-const val_is = [
-  [min, null, max],
-  [null, max, null],
-  [min, min, null],
-]
-
-// console.log(childs(val_is))
-
-console.log(minimax(val_is, 2))
 
 export { theWinner, isBoardFull, minimax }

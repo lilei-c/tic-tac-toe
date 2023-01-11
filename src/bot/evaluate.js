@@ -1,45 +1,9 @@
 /**
- * max 1
- * min 0
- *
- * val 策略: 所有 max 可能的次数 - min 可能的次数
+ * 策略: 所有 max 可能的次数 - min 可能的次数
  */
-const max = 1
-const min = 0
 
-const val_is_1 = [
-  [max, min, null],
-  [null, null, null],
-  [null, null, null],
-]
-const val_is_2 = [
-  [null, min, null],
-  [null, max, null],
-  [null, null, null],
-]
-const val_is_infinity = [
-  [max, min, null],
-  [null, max, null],
-  [null, null, max],
-]
-const val_is_infinity_2 = [
-  [null, min, null],
-  [max, max, max],
-  [null, null, min],
-]
-const val_is_negative_infinity = [
-  [null, min, null],
-  [max, min, max],
-  [null, min, min],
-]
-
-const datas = [
-  val_is_1,
-  val_is_2,
-  val_is_infinity,
-  val_is_infinity_2,
-  val_is_negative_infinity,
-]
+import { max, min } from './const'
+import { colToRow } from './support'
 
 const sumMM = (arr) => {
   let rst = {}
@@ -56,14 +20,6 @@ const score = (m) => {
   return 0
 }
 const sum = (arr) => arr.reduce((a, b) => a + b, 0)
-const colToRow = (arr) =>
-  Array(arr.length)
-    .fill(null)
-    .map((_, i) =>
-      Array(arr.length)
-        .fill(null)
-        .map((_, j) => arr[j][i])
-    )
 const evaluate = (state) => {
   let rst = 0
   // 遍历行
@@ -81,21 +37,5 @@ const evaluate = (state) => {
   )
   return rst
 }
-const log = (x) => console.log(x)
-
-console.time('time')
-console.log(`
-val_is_1,
-val_is_2,
-val_is_infinity,
-val_is_infinity_2,
-val_is_negative_infinity,
-`)
-console.log('--------------------------------')
-// Array(100)
-//   .fill(null)
-//   .forEach((m) => datas.map(evaluate))
-datas.map(evaluate).forEach(log)
-console.timeEnd('time')
 
 export { evaluate, colToRow }
